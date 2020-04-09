@@ -7,6 +7,7 @@
 #include <WiFiMulti.h>
 #include <WebSocketsClient.h> //  https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries 
 #include <ArduinoJson.h> // https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries
+#include <analogWrite.h>
 
 WiFiMulti wifiMulti;
 WebSocketsClient webSocket;
@@ -21,14 +22,18 @@ WiFiClient client;
 
 uint64_t heartbeatTimestamp = 0;
 bool isConnected = false;
-int led_pin = 5;
+int red_pin = 5;
+int green_pin = 12;
+int blue_pin = 13;
 
 void turnOn(String deviceId) {
   if (deviceId == "5e8a7bd0ce60582b5f8d3d16") // Device ID of first device
   {  
     Serial.print("Turn on device id: ");
     Serial.println(deviceId);
-    digitalWrite(led_pin, HIGH);    
+    analogWrite(red_pin, 100);
+    analogWrite(green_pin, 100);    
+    analogWrite(blue_pin, 100);        
   } 
   else {
     Serial.print("Turn on for unknown device id: ");
@@ -41,7 +46,9 @@ void turnOff(String deviceId) {
    {  
      Serial.print("Turn off Device ID: ");
      Serial.println(deviceId);
-     digitalWrite(led_pin, LOW);      
+     analogWrite(red_pin, 0);
+     analogWrite(green_pin, 0);    
+     analogWrite(blue_pin, 0);     
    }
   else {
      Serial.print("Turn off for unknown device id: ");
@@ -97,21 +104,38 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             // Alexa, set the device name to red
             // get text: {"deviceId":"xxxx","action":"SetColor","value":{"hue":0,"saturation":1,"brightness":1}}
             String hue = json ["value"]["hue"];
-            String saturation = json ["value"]["saturation"];
-            String brightness = json ["value"]["brightness"];
+            //String saturation = json ["value"]["saturation"];
+           // String brightness = json ["value"]["brightness"];
 
             Serial.println("[WSc] hue: " + hue);
-            Serial.println("[WSc] saturation: " + saturation);
-            Serial.println("[WSc] brightness: " + brightness);
-        }
-        else if(action == "SetBrightness") {
-          
-        }
-        else if(action == "AdjustBrightness") {
-          
-        }
-        else if (action == "test") {
-            Serial.println("[WSc] received test command from sinric.com");
+            //Serial.println("[WSc] saturation: " + saturation);
+            //Serial.println("[WSc] brightness: " + brightness);
+
+            if (hue == "0") { //red
+              analogWrite(red_pin, 255);
+              analogWrite(green_pin, 0);    
+              analogWrite(blue_pin, 0); 
+            }
+            else if (hue == "120") { //green
+              analogWrite(red_pin, 0);
+              analogWrite(green_pin, 255);    
+              analogWrite(blue_pin, 0);
+            }
+            else if (hue == "240") { //blue
+              analogWrite(red_pin, 0);
+              analogWrite(green_pin, 0);    
+              analogWrite(blue_pin, 255);
+            }
+            else if (hue == "60") { //yellow
+              analogWrite(red_pin, 255);
+              analogWrite(green_pin, 255);    
+              analogWrite(blue_pin, 51);
+            }
+            else if (hue == "39") { //orange
+              analogWrite(red_pin, 255);
+              analogWrite(green_pin, 128);    
+              analogWrite(blue_pin, 0);
+            }
         }
       }
       break;
@@ -124,7 +148,6 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(led_pin, OUTPUT);
   
   wifiMulti.addAP(MySSID, MyWifiPassword);
   Serial.println();
