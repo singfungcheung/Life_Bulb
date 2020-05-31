@@ -1,7 +1,3 @@
-/*
- Version 0.1 - Feb 10 2018
-*/ 
-
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>
@@ -13,9 +9,9 @@ WiFiMulti wifiMulti;
 WebSocketsClient webSocket;
 WiFiClient client;
 
-#define MyApiKey "7690bd52-abee-4beb-b969-1e5e156bd2d8" // TODO: Change to your sinric API Key. Your API Key is displayed on sinric.com dashboard
-#define MySSID "singfung" // TODO: Change to your Wifi network SSID
-#define MyWifiPassword "cheung123" // TODO: Change to your Wifi network password
+#define MyApiKey "" // TODO: Change to your sinric API Key. Your API Key is displayed on sinric.com dashboard
+#define MySSID "" // TODO: Change to your Wifi network SSID
+#define MyWifiPassword "" // TODO: Change to your Wifi network password
 
 #define API_ENDPOINT "http://sinric.com"
 #define HEARTBEAT_INTERVAL 300000 // 5 Minutes 
@@ -27,7 +23,7 @@ int green_pin = 12;
 int blue_pin = 13;
 
 void turnOn(String deviceId) {
-  if (deviceId == "5e8a7bd0ce60582b5f8d3d16") // Device ID of first device
+  if (deviceId == "") // Device ID of first device
   {  
     Serial.print("Turn on device id: ");
     Serial.println(deviceId);
@@ -42,7 +38,7 @@ void turnOn(String deviceId) {
 }
 
 void turnOff(String deviceId) {
-   if (deviceId == "5e8a7bd0ce60582b5f8d3d16") // Device ID of first device
+   if (deviceId == "") // Device ID of first device
    {  
      Serial.print("Turn off Device ID: ");
      Serial.println(deviceId);
